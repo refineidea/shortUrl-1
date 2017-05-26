@@ -1,37 +1,6 @@
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0">
-<title>请使用浏览器打开</title>
-<style type="text/css">
-body{margin: 0px 0px; width:100%; padding:0;}
-html{margin: 0px 0px; width:100%; padding:0;}
-iframe{width:100%; height: 615px; margin: 0px 0px; z-index: -999;}
-.icon{
-	position:fixed; height:100%; width:100%; z-index: 9;
-	background: url(//gw.alicdn.com/tfscom/TB1TG_5MVXXXXckXXXXXXXXXXXX) no-repeat;
-	background-size: 85%;
-	background-position: 50% 10%;
-}
-.mark{ height:100%; width:100%;}
-	.mark div{ width:100%; height:18%; bottom:0; }
-.ios {
-	background: url(//gw.alicdn.com/mt/TB1ClUpKVXXXXXRXVXXXXXXXXXX-750-220.png) no-repeat;
-	width:100%;
-	background-size: 100%;
-	background-position: 50% 50%;
-}
-.android {
-	background: url(http://gw.alicdn.com/mt/TB1RUsGKVXXXXb3XXXXXXXXXXXX-750-220.png) no-repeat;
-	width:100%;
-	background-size: 100%;
-	background-position: 50% 50%;
-}
-</style>
-</head>
-<body>
 <?php
 include_once "Controller/config.php";
+error_reporting(0);
 $agent=$_SERVER["HTTP_USER_AGENT"];
 $android   =   'Android';
 $ios       =   'iPhone';
@@ -39,7 +8,7 @@ $wx        =   'MicroMessenger';
 $pos    =   strpos($agent,$android);
 $poss   =   strpos($agent,$ios); 
 $wxw    =   strpos($agent,$wx);
-
+$shortUrl=  '';
 if($wxw===false)
 {
 	if($_GET['s'])
@@ -67,8 +36,9 @@ if($wxw===false)
 		$isurl = $iskey['su_url'];
 		$sql    = "update ".$tbname." set su_clicknum=su_clicknum+1"." where su_id = '$isid'";
 		$connection->query($sql);
-        mysqli_close($connection); 
-		header("Location: $isurl");
+        mysqli_close($connection);
+        $shortUrl   =   $isurl;
+		//header("Location: $isurl");
 	}
 	else
 	{
@@ -108,7 +78,8 @@ else
 				$sql    = "update ".$tbname." set su_clicknum=su_clicknum+1"." where su_id = '$isid'";
 				$connection->query($sql);
                 mysqli_close($connection); 
-				header("Location: $isurl");
+				//header("Location: $isurl");
+                $shortUrl   =   $isurl;
 			}
 			else
 			{
@@ -117,16 +88,16 @@ else
 		}
 		else
 		{
-			echo '<div class="mark">
-					<div class="ios"></div>
-				</div>';
+			//echo '<div class="mark">
+//					<div class="ios"></div>
+//				</div>';
 		}
 	}
 	else
 	{
-		echo '<div class="mark">
-			<div class="android"></div>
-		</div>';
+		//echo '<div class="mark">
+//			<div class="android"></div>
+//		</div>';
 	}
 }
 
@@ -169,7 +140,7 @@ function nu($l)
 	}
 
 	$arr = array($f1,$f2,$f3,$f4,$f5,$f6,$f7);
-	print_r($arr);
+	//print_r($arr);
 	$isnum = '';
 	for($i=0;$i<count($arr);$i++)
 	{
@@ -185,5 +156,53 @@ function nu($l)
 	return $p;
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">     
+	<meta content="yes" name="apple-mobile-web-app-capable">     
+	<meta content="black" name="apple-mobile-web-app-status-bar-style">     
+	<meta content="telephone=no" name="format-detection">
+	<script type="text/javascript" src="/jquery-1.11.0.min.js"></script>
+	<!--<link rel="stylesheet" href="/index/css/style.css">-->
+	<title>生成文案</title>
+    <style>
+html, body {
+    background-color:#f2523f ;
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-position:0% -10%;
+}
+</style>
+	
+	
+</head>
+
+
+<body>
+	<script>
+
+    $(function(){
+    var ua = navigator.userAgent.toLowerCase(); 
+    if(ua.match(/MicroMessenger/i) == "micromessenger") {
+        if (ua.match(/iphone/i) == "iphone" || ua.match(/ipad/i) == "ipad") {
+            $(".safari_top").css("display", "block");
+            $("#go_tip").attr("src", "https://img.alicdn.com/imgextra/i1/379137982/TB2GMpLq3RkpuFjy1zeXXc.6FXa_!!379137982.png");
+        }else{
+            $(".safari_top").css("display", "block");
+            $("#go_tip").attr("src", "https://img.alicdn.com/imgextra/i3/379137982/TB2rcSMuohnpuFjSZFEXXX0PFXa_!!379137982.png");
+        }
+    }else{
+            window.location.href =  '<?php echo $isurl;?>';
+    } 
+    });
+
+</script> 
+
+<img id="go_tip" style="width:100%" />
 </body>
 </html>
+	
+
